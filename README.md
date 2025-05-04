@@ -33,7 +33,7 @@ Create a `.env` file in the root directory:
 
 DATABASE_URL = postgresql://username:password@localhost:5432/jobportaldb
 
-SECRET_KEY=your_secret_key
+SECRET_KEY = your_secret_key
 ALGORITHM=HS256
 
 default_sender = <yoursenderemail@gmail.com>
