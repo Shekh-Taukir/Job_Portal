@@ -1,0 +1,67 @@
+-- FUNCTION: public.of_get_job_apply_per_user(integer, integer);
+-- DROP FUNCTION IF EXISTS public.of_get_job_apply_per_user(integer, integer);
+
+CREATE OR REPLACE FUNCTION public.of_get_job_apply_per_user(ai_user_id integer, ai_by_type integer DEFAULT 1) RETURNS TABLE(job_apply_id integer, applied_date timestamp without time zone, status_desc character varying, user_name text, job_title character varying) LANGUAGE 'plpgsql' AS $BODY$
+Begin
+	return query
+		select
+			ja.id as job_apply_id,
+			ja.applied_date,
+			js.status_name as status_desc,
+			um.first_name || ', ' || um.last_name as user_name,
+			jm.title as job_title
+		from
+			job_apply_mst ja
+		left outer join
+			users_mst um
+			on um.id = ja.user_id
+		left outer join
+			job_status js
+			on js.id = ja.status_id
+		left outer join
+			jobs_mst jm
+			on jm.id = ja.job_id
+		where
+			(ai_by_type = 1 and um.id = ai_user_id) or
+			(ai_by_type = 2 and jm.id = ai_user_id)
+		order by
+			ja.id desc;
+
+End;
+$BODY$;
+
+-- FUNCTION: public.of_get_user_email(integer);
+-- DROP FUNCTION IF EXISTS public.of_get_user_email(integer);
+
+CREATE OR REPLACE FUNCTION public.of_get_user_email(job_apply_id integer) RETURNS TABLE(user_email character varying) LANGUAGE 'plpgsql' AS $BODY$
+begin
+	return query
+		select
+			users.email as user_email
+		from
+			job_apply_mst job_apply
+		inner join
+			users_mst users
+			on users.id = job_apply.user_id
+		where
+			job_apply.id = job_apply_id;
+end;
+$BODY$;
+
+-- DROP FUNCTION IF EXISTS public.of_get_job_and_cmpy_name(integer);
+
+CREATE OR REPLACE FUNCTION public.of_get_job_and_cmpy_name(ai_job_id integer) RETURNS TABLE(job_title varchar, company_name varchar) LANGUAGE 'plpgsql' AS $BODY$
+begin
+	return query
+		select
+			job.title,
+			company.name
+		from
+			jobs_mst job
+		inner join
+			company_mst company
+			on company.id = job.company
+		where
+			job.id = ai_job_id;
+end;
+$BODY$;
