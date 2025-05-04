@@ -31,7 +31,7 @@ A modern, high-performance REST API backend for a Job Portal application, built 
 
 Create a `.env` file in the root directory:
 
-DATABASE_URL=postgresql://username:password@localhost:5432/jobportaldb
+DATABASE_URL = postgresql://username:password@localhost:5432/jobportaldb
 
 SECRET_KEY=your_secret_key
 ALGORITHM=HS256
